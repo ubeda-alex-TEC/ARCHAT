@@ -43,3 +43,8 @@ python firebasepy.py
 ## Licencia
 
 Este proyecto se ofrece bajo la licencia Creative Commons Legal Code CC0 1.0 Universal. Para más detalles, consulta el archivo [LICENSE](LICENSE).
+
+## Creadores
+
+Alexander Ubeda
+Alejandro Abarca
