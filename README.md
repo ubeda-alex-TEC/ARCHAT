@@ -46,5 +46,5 @@ Este proyecto se ofrece bajo la licencia Creative Commons Legal Code CC0 1.0 Uni
 
 ## Creadores
 
-Alexander Ubeda
-Alejandro Abarca
+* Alexander Ubeda
+* Alejandro Abarca
