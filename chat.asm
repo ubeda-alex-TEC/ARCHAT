@@ -1,15 +1,30 @@
 INCLUDE Irvine32.inc
 
 .data
-artLine1 db ' ______     ______     ______     __  __     ______     ______  ', 0Ah,0
-artLine2 db '/\  __ \   /\  == \   /\  __\   /\ \\ \   /\  __ \   /\__  _\ ', 0Ah,0
-artLine3 db '\ \  __ \  \ \  _<   \ \ \___  \ \  __ \  \ \  __ \  \/_/\ \/ ', 0Ah,0
-artLine4 db ' \ \\ \\  \ \\ \\  \ \\  \ \\ \\  \ \\ \\    \ \\ ', 0Ah,0
-artLine5 db '  \//\//   \// //   \//   \//\//   \//\//     \// ', 0Ah,0
-artLine6 db '                             By Team 7                          ', 0Ah, 0 ; Espacio adicional para separar del menú
+artLine1 db '  /$$$$$$  /$$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$$$', 0Ah,0
+artLine2 db ' /$$__  $$| $$__  $$ /$$__  $$| $$  | $$ /$$__  $$|__  $$__/', 0Ah,0
+artLine3 db '| $$  \ $$| $$  \ $$| $$  \__/| $$  | $$| $$  \ $$   | $$   ', 0Ah,0
+artLine4 db '| $$$$$$$$| $$$$$$$/| $$      | $$$$$$$$| $$$$$$$$   | $$   ', 0Ah,0
+artLine5 db '| $$__  $$| $$__  $$| $$      | $$__  $$| $$__  $$   | $$   ', 0Ah,0
+artLine6 db '| $$__  $$| $$__  $$| $$      | $$__  $$| $$__  $$   | $$   ', 0Ah,0
+artLine7 db '| $$  | $$| $$  | $$|  $$$$$$/| $$  | $$| $$  | $$   | $$   ', 0Ah,0
+artLine8 db '|__/  |__/|__/  |__/ \______/ |__/  |__/|__/  |__/   |__/   ', 0Ah,0
+artLine9 db '                                                               ', 0Ah,0
 
-mainMenuPrompt db "Menu Principal:", 0Ah, "1. Registro", 0Ah, "2. Enviar Mensaje", 0Ah, "3. Ver Mensajes", 0Ah, "4. Salir", 0Ah, "Seleccione una opcion: ", 0
-nicknamePrompt db "Ingrese su Nickname: ", 0
+artLinereg1 db '  ___          _    _           ', 0Ah,0
+artLinereg2 db ' | _ \___ __ _(_)__| |_ _ _ ___ ', 0Ah,0
+artLinereg3 db ' |   / -_/ _  | (_-|  _| _ / _ \', 0Ah,0
+artLinereg4 db ' |_|_\___\__, |_/__/\__|_| \___/', 0Ah,0
+artLinereg5 db '         |___/                  ', 0Ah,0
+artLinereg6 db '                                  ', 0Ah,0
+
+messagebar1 db ' ---------------------------------------------------------------', 0Ah, 0
+messagebar2 db '|                                                               |', 0Ah, 0
+messagebar3 db ' ---------------------------------------------------------------', 0Ah, 0
+
+
+mainMenuPrompt db "¡Bienvenido a Archat! ¿Que deseas hacer?:", 0Ah, 0Ah, "1. Enviar Mensaje", 0Ah, "2. Ver Mensajes", 0Ah, "3. Salir", 0Ah, "Seleccione una opcion: ", 0
+nicknamePrompt db "Ingrese su nombre: ", 0
 passwordPrompt db "Ingrese su contrasena: ", 0
 nicknameInput db 20 DUP(0)
 passwordInput db 20 DUP(0)
@@ -82,6 +97,7 @@ end_proc:
 WRITE_FILE ENDP
 
 REGISTER_USER PROC
+    call ShowArtReg
     mov edx, OFFSET nicknamePrompt
     call WriteString
     mov ecx, SIZEOF nicknameInput
@@ -124,6 +140,7 @@ VIEW_MESSAGES PROC
     mov ecx, SIZEOF viewBuffer
     mov edx, OFFSET viewBuffer
     call ReadString
+    call messagevar
 
     ; Guardar el nombre del chat en el archivo
     invoke WRITE_FILE, ADDR fileNameView, ADDR viewBuffer
@@ -182,6 +199,33 @@ WaitLoop:
     ret
 DELAY_15_SECONDS ENDP
 
+Messagevar proc
+	mov edx, OFFSET messagebar1
+	call WriteString
+	mov edx, OFFSET messagebar2
+	call WriteString
+	mov edx, OFFSET messagebar3
+	call WriteString
+	ret
+Messagevar endp
+
+ShowArtReg proc
+	mov edx, OFFSET artLinereg1
+	call WriteString
+	mov edx, OFFSET artLinereg2
+	call WriteString
+	mov edx, OFFSET artLinereg3
+	call WriteString
+	mov edx, OFFSET artLinereg4
+	call WriteString
+	mov edx, OFFSET artLinereg5
+	call WriteString
+	mov edx, OFFSET artLinereg6
+	call WriteString
+	ret
+ShowArtReg endp
+
+
 ShowArt proc
     mov edx, OFFSET artLine1
     call WriteString
@@ -193,35 +237,43 @@ ShowArt proc
     call WriteString
     mov edx, OFFSET artLine5
     call WriteString
-    mov edx, OFFSET artLine6 ; Línea vacía para espaciar
+    mov edx, OFFSET artLine6 
+    call WriteString
+    mov edx, OFFSET artLine7
+    call WriteString
+    mov edx, OFFSET artLine8
+    call WriteString
+    mov edx, OFFSET artLine9
     call WriteString
     ret
 ShowArt endp
   
 main PROC
+    ; Llamar a la función REGISTER_USER al iniciar
+    call REGISTER_USER
+
 menu_loop:
     call Clrscr 
-    call ShowArt          ; Mostrar el arte ASCII al inicio
+    call ShowArt          
     mov edx, OFFSET mainMenuPrompt
     call WriteString
     mov ecx, SIZEOF userInput
     mov edx, OFFSET userInput
     call ReadString
 
+
     cmp userInput, "1"
-    je registration_flow
-    cmp userInput, "2"
     je message_flow
-    cmp userInput, "3"
+    cmp userInput, "2"
     je view_messages_flow
-    cmp userInput, "4"
+    cmp userInput, "3"
     je exit_program
     jmp menu_loop
 
 registration_flow:
-    call Clrscr           ; Limpia la pantalla para el flujo de registro
-    call REGISTER_USER
-    jmp menu_loop
+    call Clrscr           
+    call REGISTER_USER   ; Mantener el flujo de registro aquí si el usuario lo elige
+    jmp menu_loop       ; Volver al menú principal después de completar el registro
 
 message_flow:
     call Clrscr           ; Limpia la pantalla para el flujo de mensajes
